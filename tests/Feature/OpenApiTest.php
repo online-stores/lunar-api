@@ -251,3 +251,18 @@ test('configured servers replace the derived one', function (): void {
         ['url' => 'https://b.example/api/storefront/v1'],
     ]);
 });
+
+test('the memoised document follows a change of the base URL', function (): void {
+    $generator = app(Generator::class);
+    $registry = app(ApiManager::class)->storefront('v1');
+
+    config()->set('app.url', 'https://one.example.com');
+    $first = $generator->generate($registry);
+
+    config()->set('app.url', 'https://two.example.com');
+    $second = $generator->generate($registry);
+
+    expect($first->toArray()['servers'][0]['url'])->toBe('https://one.example.com/api/storefront/v1')
+        ->and($second->toArray()['servers'][0]['url'])->toBe('https://two.example.com/api/storefront/v1')
+        ->and($generator->generate($registry))->toBe($second);
+});

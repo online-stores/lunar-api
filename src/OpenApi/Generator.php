@@ -13,13 +13,15 @@ use WeakMap;
 /**
  * Builds the OpenAPI 3.1 document of a surface version from its registry and
  * the routes registered under its name prefix. The result is memoised per
- * registry until the registry changes, which only happens at boot.
+ * registry until the registry changes, which only happens at boot, or the
+ * servers it advertises change, as app.url does per tenant in a long-lived
+ * worker serving several hosts.
  */
 final class Generator
 {
     public const OPENAPI_VERSION = '3.1.0';
 
-    /** @var WeakMap<SurfaceRegistry, array{revision: int, document: Document}> */
+    /** @var WeakMap<SurfaceRegistry, array{revision: int, servers: array<int, array<string, string>>, document: Document}> */
     private WeakMap $documents;
 
     public function __construct(
@@ -32,21 +34,23 @@ final class Generator
 
     public function generate(SurfaceRegistry $registry): Document
     {
+        $profile = SurfaceProfile::for($registry, $this->config);
+        $servers = $this->servers($profile);
         $cached = $this->documents[$registry] ?? null;
 
-        if ($cached !== null && $cached['revision'] === $registry->revision()) {
+        if ($cached !== null && $cached['revision'] === $registry->revision() && $cached['servers'] === $servers) {
             return $cached['document'];
         }
 
-        $document = $this->build($registry);
-        $this->documents[$registry] = ['revision' => $registry->revision(), 'document' => $document];
+        $document = $this->build($registry, $profile, $servers);
+        $this->documents[$registry] = ['revision' => $registry->revision(), 'servers' => $servers, 'document' => $document];
 
         return $document;
     }
 
-    private function build(SurfaceRegistry $registry): Document
+    /** @param  array<int, array<string, string>>  $servers */
+    private function build(SurfaceRegistry $registry, SurfaceProfile $profile, array $servers): Document
     {
-        $profile = SurfaceProfile::for($registry, $this->config);
         $components = new ComponentBuilder($registry, $profile);
         $operations = new OperationBuilder(
             $registry,
@@ -76,7 +80,7 @@ final class Generator
                 'x-lunar-release' => self::release(),
                 'license' => ['name' => 'MIT', 'identifier' => 'MIT'],
             ],
-            'servers' => $this->servers($profile),
+            'servers' => $servers,
             // An empty root security list states that operations are public unless they say otherwise.
             'security' => $profile->globalSecurityScheme !== null ? [[$profile->globalSecurityScheme => []]] : [],
         ];
