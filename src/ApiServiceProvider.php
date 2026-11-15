@@ -199,14 +199,20 @@ class ApiServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * A request under the prefix of the built-in surfaces or of any surface a
+     * host registers with `Api::surface()`, which defaults to `api/{surface}`.
+     */
     protected function isApiRequest(Request $request): bool
     {
-        foreach (['storefront', 'admin'] as $surface) {
+        $surfaces = array_map(fn (SurfaceRegistry $registry) => $registry->surface, $this->api()->surfaces());
+
+        foreach (array_unique(['storefront', 'admin', ...$surfaces]) as $surface) {
             if (! config("lunar.api.{$surface}.enabled", true)) {
                 continue;
             }
 
-            $prefix = trim((string) config("lunar.api.{$surface}.prefix"), '/');
+            $prefix = trim((string) config("lunar.api.{$surface}.prefix", "api/{$surface}"), '/');
 
             if ($prefix !== '' && ($request->is($prefix) || $request->is("{$prefix}/*"))) {
                 return true;
