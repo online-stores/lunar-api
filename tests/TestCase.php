@@ -20,6 +20,7 @@ use Lunar\Nestedset\NestedSetServiceProvider;
 use Lunar\Tests\Core\Stubs\TestTaxDriver;
 use Lunar\Tests\Core\Stubs\User;
 use Lunar\Tests\TestCase as BaseTestCase;
+use Spatie\Permission\Models\Permission;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\LaravelBlink\BlinkServiceProvider;
 use Spatie\MediaLibrary\MediaLibraryServiceProvider;
@@ -120,6 +121,20 @@ class TestCase extends BaseTestCase
             'token' => $issued->plainTextToken,
             'headers' => ['Authorization' => 'Bearer '.$issued->plainTextToken],
         ];
+    }
+
+    /**
+     * Abilities the core permission manifest does not ship yet, granted as staff permissions.
+     * Lunar's PR adds them to the manifest; on 2.0.0-alpha.9 the manifest only reads the
+     * staff guard's permissions.
+     */
+    protected function staffPermissions(string ...$handles): static
+    {
+        foreach ($handles as $handle) {
+            Permission::findOrCreate($handle, config('lunar.staff.guard', 'staff'));
+        }
+
+        return $this;
     }
 
     /**

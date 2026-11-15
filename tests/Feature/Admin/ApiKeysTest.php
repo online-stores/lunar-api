@@ -12,6 +12,7 @@ beforeEach(function (): void {
 });
 
 test('issuing a key returns the plaintext token once', function (): void {
+    $this->staffPermissions('catalog:read', 'sales:read');
     $staff = Staff::factory()->create();
 
     $response = $this->withHeaders($this->admin['headers'])->postJson('/api/admin/v1/api-keys', [
@@ -75,6 +76,7 @@ test('revoking a key keeps it listed but stops it authenticating', function (): 
 });
 
 test('the console command creates, lists and revokes keys', function (): void {
+    $this->staffPermissions('catalog:read');
     $staff = Staff::factory()->create(['email' => 'ops@example.com']);
 
     $this->artisan('lunar:api:key', ['action' => 'create', '--name' => 'Console key', '--ability' => ['catalog:read'], '--staff' => 'ops@example.com', '--expires' => 30])
