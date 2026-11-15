@@ -258,7 +258,7 @@ final class ComponentBuilder
             ],
             'PaginationMeta' => [
                 'title' => 'PaginationMeta',
-                'description' => 'Page-number pagination, or cursor pagination when the request used page[cursor].',
+                'description' => 'Page-number pagination, or cursor pagination for a resource that supports cursors unless the request used page[number].',
                 'oneOf' => [
                     [
                         'type' => 'object',

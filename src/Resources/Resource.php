@@ -79,7 +79,7 @@ abstract class Resource
         return (int) config('lunar.api.pagination.max_size', 100);
     }
 
-    /** Whether `?page[cursor]=` is accepted for this resource. */
+    /** Whether the collection is walked by cursor (`?page[cursor]=`) unless a request asks for `page[number]`. */
     public function supportsCursorPagination(): bool
     {
         return false;

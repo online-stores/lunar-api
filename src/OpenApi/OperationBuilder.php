@@ -381,7 +381,7 @@ final class OperationBuilder
                 'in' => 'query',
                 'required' => false,
                 'schema' => ['type' => 'string'],
-                'description' => 'A cursor from a previous response, instead of page[number].',
+                'description' => 'A cursor from a previous response. Without page[number] the collection is walked by cursor from the first page.',
             ];
         }
 

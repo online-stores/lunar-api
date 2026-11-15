@@ -87,11 +87,14 @@ final class QueryApplier
     }
 
     /**
+     * A resource that supports cursors walks by cursor from the first page,
+     * unless the request asks for a page number.
+     *
      * @param  Builder<Model>  $query
      */
     public function paginate(Builder $query, ResourceDefinition $definition, Query $parsed): LengthAwarePaginator|CursorPaginator
     {
-        if ($parsed->cursor !== null) {
+        if ($parsed->cursor !== null || ($parsed->pageNumber === null && $definition->resource->supportsCursorPagination())) {
             return $query->cursorPaginate($parsed->pageSize, ['*'], 'page[cursor]', $parsed->cursor);
         }
 
