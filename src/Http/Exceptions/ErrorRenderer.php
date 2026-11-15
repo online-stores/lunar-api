@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Lunar\Core\Exceptions\Carts\CartException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -40,6 +41,15 @@ final class ErrorRenderer
                     ]);
                 }
             }
+
+            return $this->respond(422, $errors);
+        }
+
+        if ($e instanceof CartException) {
+            $errors = array_map(
+                fn (string $message) => $this->error(422, 'cart_rejected', __('api::errors.cart_rejected.title'), $message),
+                $e->errors()->all() ?: [$e->getMessage()],
+            );
 
             return $this->respond(422, $errors);
         }

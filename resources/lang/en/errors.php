@@ -43,6 +43,9 @@ return [
     'validation_failed' => [
         'title' => 'Validation failed',
     ],
+    'cart_rejected' => [
+        'title' => 'Cart rejected the change',
+    ],
     'unauthenticated' => [
         'title' => 'Unauthenticated',
         'detail' => 'A valid credential is required.',

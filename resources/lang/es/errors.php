@@ -43,6 +43,9 @@ return [
     'validation_failed' => [
         'title' => 'La validación falló',
     ],
+    'cart_rejected' => [
+        'title' => 'El carrito rechazó el cambio',
+    ],
     'unauthenticated' => [
         'title' => 'No autenticado',
         'detail' => 'Se requiere una credencial válida.',

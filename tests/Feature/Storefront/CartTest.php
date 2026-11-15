@@ -103,3 +103,22 @@ test('an unknown or hidden purchasable fails validation with a pointer', functio
         ->assertJsonPath('errors.0.source.pointer', '/purchasable_id')
         ->assertJsonPath('errors.1.source.pointer', '/quantity');
 });
+
+test('a line the cart rejects is a 422 with the cart messages', function (): void {
+    $product = $this->visibleProduct($this->store);
+    $variant = $this->pricedVariant($product, $this->store['currency'], 1999, [
+        'selling_policy' => 'in_stock',
+        'stock_on_hand' => 1,
+        'stock_available' => 1,
+    ]);
+
+    $this->postJson('/api/storefront/v1/cart/lines', [
+        'purchasable_id' => $variant->public_id,
+        'quantity' => 2,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.status', '422')
+        ->assertJsonPath('errors.0.code', 'cart_rejected')
+        ->assertJsonPath('errors.0.detail', 'Item is not available at this quantity.')
+        ->assertJsonMissingPath('errors.0.source');
+});
