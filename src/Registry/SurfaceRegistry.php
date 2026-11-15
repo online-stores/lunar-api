@@ -8,6 +8,7 @@ use Lunar\Api\Exceptions\ResourceDefinitionException;
 use Lunar\Api\OpenApi\Document;
 use Lunar\Api\Resources\Resource;
 use Lunar\Api\Resources\ResourceExtension;
+use Lunar\Api\Resources\Translations;
 
 /**
  * The resources one surface version serves. Built-ins register with
@@ -35,11 +36,26 @@ final class SurfaceRegistry
     /** Bumped by every registration so a memoised OpenAPI document knows it is stale. */
     private int $revision = 0;
 
+    /** How a host surface serialises translatable fields, for its OpenAPI document; null for the surface default. */
+    public private(set) ?Translations $translations = null;
+
     public function __construct(
         public readonly string $surface,
         public readonly string $version,
         private readonly Container $container,
     ) {}
+
+    /**
+     * Declare how this surface serialises translatable fields. Pass the same
+     * mode to the SerializationContext the surface's controllers build.
+     */
+    public function useTranslations(Translations $translations): static
+    {
+        $this->translations = $translations;
+        $this->revision++;
+
+        return $this;
+    }
 
     /**
      * @param  class-string<resource>  ...$classes

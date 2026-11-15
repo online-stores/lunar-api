@@ -9,7 +9,8 @@ use Lunar\Api\Resources\Translations;
 /**
  * What differs between surfaces in the document: how translatable fields
  * serialise, which security scheme applies, the context headers and the
- * envelope meta. Unknown surfaces get the admin-like defaults.
+ * envelope meta. Unknown surfaces get the admin-like defaults, with the
+ * translations mode their registry declares.
  */
 final class SurfaceProfile
 {
@@ -39,7 +40,7 @@ final class SurfaceProfile
         return match ($registry->surface) {
             'storefront' => self::storefront($registry, $prefix, (string) $config->get('lunar.api.storefront.guard', '')),
             'admin' => self::admin($registry, $prefix),
-            default => new self($registry->surface, $registry->version, $prefix, Translations::Map),
+            default => new self($registry->surface, $registry->version, $prefix, $registry->translations ?? Translations::Map),
         };
     }
 
