@@ -58,3 +58,14 @@ Api::storefront('v1')->extend(ProductResource::class, ReviewsProductExtension::c
 ```
 
 A host that needs to change a built-in resource's own fields replaces it with a subclass: `Api::storefront('v1')->replace(ProductResource::class, MyProductResource::class)`. Extensions are keyed by the built-in class, so they keep applying.
+
+## Tests
+
+The package tests came from `tests/api` of the Lunar monorepo. They run standalone on Testbench against the `lunarphp/core` version the fork targets:
+
+```bash
+COMPOSER_ROOT_VERSION=2.0.0-alpha.9 composer update
+composer test
+```
+
+`COMPOSER_ROOT_VERSION` resolves the `self.version` constraint on `lunarphp/core`.

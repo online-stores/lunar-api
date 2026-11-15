@@ -14,10 +14,21 @@
     "php": "^8.4",
     "lunarphp/core": "self.version"
   },
+  "require-dev": {
+    "orchestra/testbench": "^10.0|^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0"
+  },
   "autoload": {
     "psr-4": {
       "Lunar\\Api\\": "src/",
       "Lunar\\Api\\Database\\Factories\\": "database/factories"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Lunar\\Tests\\Api\\": "tests/",
+      "Lunar\\Tests\\": "tests/Support/"
     }
   },
   "extra": {
@@ -37,5 +48,8 @@
       "pestphp/pest-plugin": true,
       "php-http/discovery": true
     }
+  },
+  "scripts": {
+    "test": "pest"
   }
 }
