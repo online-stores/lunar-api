@@ -12,7 +12,7 @@
   ],
   "require": {
     "php": "^8.4",
-    "lunarphp/core": "self.version"
+    "lunarphp/core": "^2.0@alpha"
   },
   "require-dev": {
     "orchestra/testbench": "^10.0|^11.0",

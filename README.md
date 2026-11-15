@@ -64,8 +64,8 @@ A host that needs to change a built-in resource's own fields replaces it with a 
 The package tests came from `tests/api` of the Lunar monorepo. They run standalone on Testbench against the `lunarphp/core` version the fork targets:
 
 ```bash
-COMPOSER_ROOT_VERSION=2.0.0-alpha.9 composer update
+composer update --with lunarphp/core:2.0.0-alpha.9
 composer test
 ```
 
-`COMPOSER_ROOT_VERSION` resolves the `self.version` constraint on `lunarphp/core`.
+`lunarphp/core` is required as `^2.0@alpha` instead of the monorepo's `self.version`, which an inline alias such as `dev-neos as 2.0.0-alpha.9` does not resolve.
